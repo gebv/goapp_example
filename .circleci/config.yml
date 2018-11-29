@@ -24,7 +24,7 @@ jobs:
           name: Preparing the artifacts
           command: |
             mkdir -p /tmp/app_bin
-            cp -p ~/bin/* /tmp/app_bin
+            cp -p ./bin/* /tmp/app_bin
       - store_artifacts:
           path: /tmp/app_bin
 workflows:
