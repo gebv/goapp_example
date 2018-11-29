@@ -7,28 +7,26 @@ jobs:
     steps:
       - checkout
       # - run:
-      #     name: Build application
+      #     name: Update env
       #     command: |
-      #       make build
+      #       echo 'export PATH="$GOPATH/bin:$PATH"' >> $BASH_ENV
+      #       echo 'export GIT_SHA1="$CIRCLE_SHA1"' >> $BASH_ENV
+      #       source $BASH_ENV
       - run:
-          name: Update env
+          name: Run tests
           command: |
-            echo 'export PATH="$GOPATH/bin:$PATH"' >> $BASH_ENV
-            echo 'export GIT_SHA1="$CIRCLE_SHA1"' >> $BASH_ENV
-            source $BASH_ENV
+            make test
       - run:
-          name: Show all envs
-          environment:
-            FOO: $${CIRCLE_SHA1}
+          name: Build application
           command: |
-            env
-      # - run:
-      #     name: Preparing the artifacts
-      #     command: |
-      #       mkdir -p /tmp/app_bin
-      #       cp -p ~/bin/* /tmp/app_bin
-      # - store_artifacts:
-      #     path: /tmp/app_bin
+            make build
+      - run:
+          name: Preparing the artifacts
+          command: |
+            mkdir -p /tmp/app_bin
+            cp -p ~/bin/* /tmp/app_bin
+      - store_artifacts:
+          path: /tmp/app_bin
 workflows:
   version: 2
   build-and-deploy:
