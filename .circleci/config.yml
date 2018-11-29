@@ -11,10 +11,13 @@ jobs:
       #     command: |
       #       make build
       - run:
-          name: Show all enviroments
-          environment:
-            FOO: BAR
-            APP_VERSION: APP_{$CIRCLE_BUILD_NUM}
+          name: Update env
+          command: |
+            echo 'export PATH="$GOPATH/bin:$PATH"' >> $BASH_ENV
+            echo 'export GIT_SHA1="$CIRCLE_SHA1"' >> $BASH_ENV
+            source $BASH_ENV
+      - run:
+          name: Show all envs
           command: |
             env
       # - run:
