@@ -18,6 +18,8 @@ jobs:
             source $BASH_ENV
       - run:
           name: Show all envs
+          environment:
+            FOO: $${CIRCLE_SHA1}
           command: |
             env
       # - run:
