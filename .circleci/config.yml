@@ -10,10 +10,13 @@ jobs:
       #     name: Build application
       #     command: |
       #       make build
-      - environment:
-          FOO: BAR
-          APP_VERSION: APP_$CIRCLE_BUILD_NUM
-      - run: env
+      - run:
+          name: Show all enviroments
+          environment:
+            FOO: BAR
+            APP_VERSION: APP_$CIRCLE_BUILD_NUM
+          command: |
+            env
       # - run:
       #     name: Preparing the artifacts
       #     command: |
