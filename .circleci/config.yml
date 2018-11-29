@@ -1,0 +1,33 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.10
+    working_directory: /go/src/github.com/gebv/goapp_example
+    steps:
+      - checkout
+      # - run:
+      #     name: Build application
+      #     command: |
+      #       make build
+      - environment:
+          FOO: BAR
+          APP_VERSION: APP_$CIRCLE_BUILD_NUM
+      - run: env
+      # - run:
+      #     name: Preparing the artifacts
+      #     command: |
+      #       mkdir -p /tmp/app_bin
+      #       cp -p ~/bin/* /tmp/app_bin
+      # - store_artifacts:
+      #     path: /tmp/app_bin
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: master
