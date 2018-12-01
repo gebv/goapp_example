@@ -67,7 +67,7 @@ jobs:
               META_FILENAME=BRANCH_${APPBUILD_GITBRANCH}_LATEST
             fi
 
-            DIST_FILENAME=goapp_example-${APPBUILD_DATE}-${APPBUILD_GITHASH}.tar
+            DIST_FILENAME=goapp_example-build_${APPBUILD_CIRCLE_BUILD_NUM}.tar
 
             echo $DIST_FILENAME >> $META_FILENAME
 
