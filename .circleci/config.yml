@@ -23,15 +23,67 @@ jobs:
       - run:
           name: Preparing the artifacts
           command: |
-            mkdir -p /tmp/app_bin
-            cp -p ./bin/* /tmp/app_bin
-      - store_artifacts:
-          path: /tmp/app_bin
+            GITHASH=`git log -1 --pretty=format:"%h" || echo "???"`
+            CURDATE=`date -u +%Y%m%d-%H%M%S`
+
+            echo APPBUILD_GITHASH=${GITHASH} >> ./bin/META
+            echo APPBUILD_CIRCLE_BUILD_NUM=${CIRCLE_BUILD_NUM} >> ./bin/META
+            echo APPBUILD_GITBRANCH=${CIRCLE_BRANCH} >> ./bin/META
+            echo APPBUILD_GITTAG=${CIRCLE_TAG} >> ./bin/META
+            echo APPBUILD_DATE=${CURDATE} >> ./bin/META
+            echo APPBUILD_GITCOMPARE=${CIRCLE_COMPARE_URL} >> ./bin/META
+
+            mkdir -p /tmp/_dist
+            cp -p ./bin/* /tmp/_dist
+      - persist_to_workspace:
+          root: /tmp/_dist
+      # - store_artifacts:
+      #     path: /tmp/_dist
+
+  store_artifacts:
+    docker:
+        - image: cibuilds/aws:latest
+    working_directory: /tmp
+    steps:
+      - persist_to_workspace:
+          root: /tmp/_dist
+      - run:
+          name: Prepare artifacts
+          command: |
+            tar -cvf goapp_example.tar /tmp/_dist
+      - deploy:
+          name: Store artifacts
+          command: |
+            source /tmp/_dist/META
+
+            if [ -z $APPBUILD_GITBRANCH ]
+            then
+              # hook by tag
+              META_FILENAME=VERSION_${APPBUILD_GITTAG}
+            else
+              # hook by branch
+              META_FILENAME=BRANCH_${APPBUILD_GITBRANCH}_LATEST
+            fi
+
+            DIST_FILENAME=goapp_example-${APPBUILD_DATE}-${APPBUILD_GITHASH}.tar
+
+            echo $DIST_FILENAME >> $META_FILENAME
+
+            aws s3 cp /tmp/goapp_example.tar s3://zps-build-s3/${DIST_FILENAME}.tar
+            aws s3 cp /tmp/${META_FILENAME} s3://zps-build-s3/${META_FILENAME}
 workflows:
   version: 2
   build-and-deploy:
     jobs:
       - build:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: master
+      - store_artifacts:
+          requires:
+            - build
           filters:
             tags:
               only: /.*/
