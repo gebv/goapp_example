@@ -45,13 +45,13 @@ jobs:
         - image: cibuilds/aws:latest
     working_directory: /tmp
     steps:
-      - persist_to_workspace:
-          root: /go/src/github.com/gebv/goapp_example
+      - attach_workspace:
+          at: /go/src/github.com/gebv/goapp_example
       - run:
           name: Prepare artifacts
           command: |
             mkdir -p /tmp/_dist
-            cp ./bin/* /tmp/_dist
+            cp /go/src/github.com/gebv/goapp_example/bin/* /tmp/_dist
             tar -cvf goapp_example.tar /tmp/_dist
       - deploy:
           name: Store artifacts
