@@ -2,8 +2,8 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.10
-    working_directory: /go/src/github.com/gebv/goapp_example
+      - image: circleci/golang:1.11
+    working_directory: ~/repo
     steps:
       - checkout
       # - run:
@@ -34,7 +34,7 @@ jobs:
             echo APPBUILD_GITCOMPARE=${CIRCLE_COMPARE_URL} >> ./bin/META
 
       - persist_to_workspace:
-          root: /go/src/github.com/gebv/goapp_example
+          root: ~/repo
           paths:
             - bin/*
       # - store_artifacts:
@@ -43,15 +43,15 @@ jobs:
   store_artifacts:
     docker:
         - image: cibuilds/aws:latest
-    working_directory: /tmp
+    working_directory: ~/repo
     steps:
       - attach_workspace:
-          at: /go/src/github.com/gebv/goapp_example
+          at: ~/repo
       - run:
           name: Prepare artifacts
           command: |
             mkdir -p /tmp/_dist
-            cp /go/src/github.com/gebv/goapp_example/bin/* /tmp/_dist
+            cp ~/repo/bin/* /tmp/_dist
             tar -cvf goapp_example.tar /tmp/_dist
       - deploy:
           name: Store artifacts
