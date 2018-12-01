@@ -43,7 +43,7 @@ jobs:
   store_artifacts:
     docker:
         - image: cibuilds/aws:latest
-    working_directory: ~/repo
+    working_directory: /tmp
     steps:
       - attach_workspace:
           at: ~/repo
