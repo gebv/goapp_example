@@ -93,7 +93,9 @@ workflows:
             tags:
               only: /.*/
             branches:
-              only: master
+              only:
+                - master
+                - stable
       - store_artifacts:
           requires:
             - build
@@ -101,7 +103,9 @@ workflows:
             tags:
               only: /.*/
             branches:
-              only: master
+              only:
+                - master
+                - stable
       - release:
           requires:
             - build
