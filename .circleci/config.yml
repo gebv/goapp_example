@@ -71,8 +71,8 @@ jobs:
 
             echo $DIST_FILENAME >> $META_FILENAME
 
-            aws s3 cp /tmp/goapp_example.tar s3://zps-build-s3/${DIST_FILENAME}.tar
-            aws s3 cp /tmp/${META_FILENAME} s3://zps-build-s3/${META_FILENAME}
+            aws s3 cp /tmp/goapp_example.tar s3://${STORE_TO_S3BUKET}/${DIST_FILENAME}.tar
+            aws s3 cp /tmp/${META_FILENAME} s3://${STORE_TO_S3BUKET}/${META_FILENAME}
 workflows:
   version: 2
   build-and-deploy:
