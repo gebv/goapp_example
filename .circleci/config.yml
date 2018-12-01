@@ -52,27 +52,27 @@ jobs:
           command: |
             mkdir -p /tmp/_dist
             cp ~/repo/bin/* /tmp/_dist
-            tar -cvf /tmp/goapp_example.tar /tmp/_dist
+            tar -cvf /tmp/dist.tar /tmp/_dist
       - deploy:
           name: Store artifacts
           command: |
             source /tmp/_dist/META
 
-            if [ -z $APPBUILD_GITBRANCH ]
+            if [ -z $CIRCLE_BRANCH ]
             then
               # hook by tag
-              META_FILENAME=VERSION_${APPBUILD_GITTAG}
+              META_FILENAME=TAG_`echo ${CIRCLE_TAG} | awk '{print toupper($0)}'`
             else
               # hook by branch
-              META_FILENAME=BRANCH_${APPBUILD_GITBRANCH}_LATEST
+              META_FILENAME=BRANCH_`echo ${CIRCLE_BRANCH} | awk '{print toupper($0)}'`
             fi
 
-            DIST_FILENAME=goapp_example-build_${APPBUILD_CIRCLE_BUILD_NUM}.tar
+            DIST_FILENAME=${CIRCLE_PROJECT_REPONAME}-build_${CIRCLE_BUILD_NUM}.tar
 
             echo $DIST_FILENAME >> $META_FILENAME
 
-            aws s3 cp /tmp/goapp_example.tar s3://${STORE_TO_S3BUKET}/${DIST_FILENAME}
-            aws s3 cp /tmp/${META_FILENAME} s3://${STORE_TO_S3BUKET}/${META_FILENAME}
+            aws s3 cp /tmp/dist.tar s3://${STORE_TO_S3BUKET}/${CIRCLE_PROJECT_REPONAME}/${DIST_FILENAME}
+            aws s3 cp /tmp/${META_FILENAME} s3://${STORE_TO_S3BUKET}/${CIRCLE_PROJECT_REPONAME}_${META_FILENAME}
   release:
     docker:
       - image: williamyeh/ansible:alpine3
