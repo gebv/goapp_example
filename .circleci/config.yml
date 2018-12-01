@@ -33,10 +33,10 @@ jobs:
             echo APPBUILD_DATE=${CURDATE} >> ./bin/META
             echo APPBUILD_GITCOMPARE=${CIRCLE_COMPARE_URL} >> ./bin/META
 
-            mkdir -p /tmp/_dist
-            cp -p ./bin/* /tmp/_dist
       - persist_to_workspace:
-          root: /tmp/_dist
+          root: /go/src/github.com/gebv/goapp_example
+          paths:
+            - bin/*
       # - store_artifacts:
       #     path: /tmp/_dist
 
@@ -46,10 +46,12 @@ jobs:
     working_directory: /tmp
     steps:
       - persist_to_workspace:
-          root: /tmp/_dist
+          root: /go/src/github.com/gebv/goapp_example
       - run:
           name: Prepare artifacts
           command: |
+            mkdir -p /tmp/_dist
+            cp ./bin/* /tmp/_dist
             tar -cvf goapp_example.tar /tmp/_dist
       - deploy:
           name: Store artifacts
