@@ -52,7 +52,7 @@ jobs:
           command: |
             mkdir -p /tmp/_dist
             cp ~/repo/bin/* /tmp/_dist
-            tar -cvf goapp_example.tar /tmp/_dist
+            tar -cvf /tmp/goapp_example.tar /tmp/_dist
       - deploy:
           name: Store artifacts
           command: |
